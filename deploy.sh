@@ -12,7 +12,7 @@ rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 # Compilation des fichiers Java avec le JAR des Servlets
 find $SRC_DIR -name "*.java" > sources.txt
-javac -cp $SERVLET_API_JAR -d $BUILD_DIR @sources.txt
+javac -cp $SERVLET_API_JAR:$MY_SPRING_JAR -d $BUILD_DIR @sources.txt
 rm sources.txt
 
 # Générer le fichier .jar dans le dossier build
