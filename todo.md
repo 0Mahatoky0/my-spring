@@ -1,0 +1,13 @@
+# sujet 
+- [ok] manambotra FrontControleurServlet
+  - [ok] toute les url renvois : le contenu de l url
+    - [ok] getpathURI
+    - [ok] getPathURL -> toString
+    - [ok] print aveo
+- transormer en .jar
+  - compilier le projet 
+  - cree le .jar du projet 
+  - incure dans une aure app
+  - deployer l autre app
+  - verifier que l url de l autre app marche
+- deploiyer vers tomcat
