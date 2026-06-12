@@ -3,12 +3,12 @@
         <welcome-file>/</welcome-file>
     </welcome-file-list>
     <servlet>
-        <servlet-name>AuthentificationServlet</servlet-name>
-        <servlet-class>AuthentificationServlet</servlet-class>
+        <servlet-name>DispacherServlet</servlet-name>
+        <servlet-class>DispacherServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>AuthentificationServlet</servlet-name>
+        <servlet-name>DispacherServlet</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 </web-app>
