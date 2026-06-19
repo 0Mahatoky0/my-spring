@@ -1,4 +1,6 @@
 import java.io.*;
+
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,9 +14,11 @@ public class DispacherServlet extends HttpServlet {
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
+        ServletContext context = getServletContext();
+        String pakageControleur =  context.getInitParameter("controleurPackage");
         String uri = req.getServletPath();
         PrintWriter out = res.getWriter();
-        out.print(uri);
+        out.print("Url du controleur : " + pakageControleur);
         out.flush();
     }
 }
