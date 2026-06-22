@@ -12,7 +12,7 @@ import anotation.UrlMapping;
 
 public class FinderAnotation {
 
-    public static HashMap<String, String> getControleurMaping(String packageName) throws Exception {
+    public static HashMap<String,String> getControleurMaping(String packageName) throws Exception {
         // recuperer les classe dans le package
         List<Class<?>> listClasses = findAllControleur(packageName);
         HashMap<String, String> allMaping = new HashMap<>();
@@ -76,9 +76,20 @@ public class FinderAnotation {
                         String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
                         classes.add(Class.forName(className));
                     }
+
+                    //verifier si il sagit d une directory
+                    if(file.isDirectory()) {
+                        List<Class<?>> sousClass = FinderAnotation.getClassesInPackage(packageName.concat(".").concat(file.getName()));
+                        classes.addAll(sousClass);
+                    }
                 }
             }
         }
         return classes;
+    }
+
+    public static void main(String[] args) throws Exception {
+        List<Class<?>> classes = FinderAnotation.getClassesInPackage("controleur");
+        System.out.println(classes);
     }
 }
