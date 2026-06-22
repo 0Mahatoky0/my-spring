@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +14,7 @@ import util.FinderAnotation;
 public class DispacherServlet extends HttpServlet {
 
     private List<String> classeControleurs = new ArrayList<>();
-    private HashMap<String, String> urlMap;
+    private HashMap<String, Method> urlMap;
 
     @Override
     public void init() throws ServletException {
@@ -26,7 +27,7 @@ public class DispacherServlet extends HttpServlet {
             if (pakageControleur == null || pakageControleur.isBlank()) {
                 throw new ServletException("Parametre d'initialisation 'controleurPackage' manquant dans web.xml");
             }
-            this.classeControleurs = FinderAnotation.findControleurName(pakageControleur, getClass());
+            this.classeControleurs = FinderAnotation.findControleurName(pakageControleur);
             this.urlMap = FinderAnotation.getControleurMaping(pakageControleur);
         } catch (Exception e) {
             throw new ServletException("Impossible d'initialiser la liste des controleurs", e);
@@ -49,7 +50,7 @@ public class DispacherServlet extends HttpServlet {
         }
 
         this.urlMap.forEach((cle, valeur) -> {
-            out.println(cle + " -> " + valeur);
+            out.println(cle + " -> " + valeur.getDeclaringClass().getName() + "--->" + valeur.getName());
         });
         out.flush();
     }

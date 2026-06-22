@@ -3,6 +3,7 @@ package util;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.text.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,17 +13,17 @@ import anotation.UrlMapping;
 
 public class FinderAnotation {
 
-    public static HashMap<String,String> getControleurMaping(String packageName) throws Exception {
+    public static HashMap<String,Method> getControleurMaping(String packageName) throws Exception {
         // recuperer les classe dans le package
         List<Class<?>> listClasses = findAllControleur(packageName);
-        HashMap<String, String> allMaping = new HashMap<>();
+        HashMap<String, Method> allMaping = new HashMap<>();
 
         // recuperer la lsite des fonction du controleur
         for (Class<?> controleur : listClasses) {
             for (Method m : controleur.getDeclaredMethods()) {
                 if (m.isAnnotationPresent(UrlMapping.class)) {
                     UrlMapping urlMap = m.getAnnotation(UrlMapping.class);
-                    allMaping.put(urlMap.value(),controleur.getSimpleName() + "::" + m.getName());            
+                    allMaping.put(urlMap.value(), m);
                 }
             }
         }
@@ -42,15 +43,13 @@ public class FinderAnotation {
         return lsitControleurs;
     }
 
-    public static List<String> findControleurName(String packageName, Class<?> clazz) throws Exception {
+    public static List<String> findControleurName(String packageName) throws Exception {
         // recuperer les classe dans le package
-        List<Class<?>> listClasses = getClassesInPackage(packageName);
+        List<Class<?>> listClasses = findAllControleur(packageName);
         List<String> listeClasseAnnoter = new ArrayList<>();
         // verifier si la classe possede l anotation
         for (Class<?> class1 : listClasses) {
-            if (class1.isAnnotationPresent(Controleur.class)) {
-                listeClasseAnnoter.add(class1.getSimpleName());
-            }
+            listeClasseAnnoter.add(class1.getSimpleName());
         }
         return listeClasseAnnoter;
     }
@@ -77,9 +76,10 @@ public class FinderAnotation {
                         classes.add(Class.forName(className));
                     }
 
-                    //verifier si il sagit d une directory
-                    if(file.isDirectory()) {
-                        List<Class<?>> sousClass = FinderAnotation.getClassesInPackage(packageName.concat(".").concat(file.getName()));
+                    // verifier si il sagit d une directory
+                    if (file.isDirectory()) {
+                        List<Class<?>> sousClass = FinderAnotation
+                                .getClassesInPackage(packageName.concat(".").concat(file.getName()));
                         classes.addAll(sousClass);
                     }
                 }
@@ -88,8 +88,8 @@ public class FinderAnotation {
         return classes;
     }
 
-    public static void main(String[] args) throws Exception {
-        List<Class<?>> classes = FinderAnotation.getClassesInPackage("controleur");
-        System.out.println(classes);
-    }
+    // public static void main(String[] args) throws Exception {
+    // List<Class<?>> classes = FinderAnotation.getClassesInPackage("controleur");
+    // System.out.println(classes);
+    // }
 }
