@@ -5,9 +5,12 @@
     - [ok] getPathURL -> toString
     - [ok] print aveo
 - transormer en .jar
-  - compilier le projet 
-  - cree le .jar du projet 
+  - [ok] compilier  uniquement le servlet Dispacher avec la lib servlet le projet 
+  - [ok] cree le .jar du projet 
   - incure dans une aure app
-  - deployer l autre app
-  - verifier que l url de l autre app marche
-- deploiyer vers tomcat
+  - [ok] deployer l autre app
+  - [ok] verifier que l url de l autre app marche
+- [ok] deploiyer vers tomcat
+- verifier :
+  - contenu html , jsp en priorite
+  - servlet a la fin
