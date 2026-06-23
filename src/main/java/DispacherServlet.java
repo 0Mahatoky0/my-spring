@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.UrlMethod;
 import util.FinderAnotation;
+import util.MethodExecutor;
 
 public class DispacherServlet extends HttpServlet {
 
@@ -82,6 +83,14 @@ public class DispacherServlet extends HttpServlet {
             Method method = urlMap.get(new UrlMethod(sourceUrl, methodName));
             out.println(sourceUrl.concat("->").concat(method.getDeclaringClass().getName()).concat("::")
                     .concat(method.getName()));
+                    try {
+                        out.println("INF : Execution de la methode ...");
+                        MethodExecutor.execute(method);
+                        out.println("INF : La methode a ete executer avec succes !");
+                    } catch (Exception e) {
+                        out.println("ERREUR : Une erreur s est produit lors de l execution de la methode : " + e.getMessage());
+                        e.printStackTrace();
+                    }
         } else {
             out.println("-URL INTROUVABLE (404)-");
             this.urlMap.forEach((cle, valeur) -> {

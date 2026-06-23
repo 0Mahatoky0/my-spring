@@ -18,7 +18,7 @@ Permete la diferenciation entre methode :
   - recuperer la methode via la cle
   - verfifier si l encien code marche
 # sprint 3-bis
-- appeler la fonction lors de tapage de l url
-    - cree une instance de Url (associer a l url et au methode)
-    - recuperer la methode associer a l url
-    - executer le mehode
+- [ok] appeler la fonction lors de tapage de l url
+    - [ok] cree une instance de Url (associer a l url et au methode)
+    - [ok] recuperer la methode associer a l url
+    - [ok] executer le mehode
