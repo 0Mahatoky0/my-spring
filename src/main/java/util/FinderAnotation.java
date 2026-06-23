@@ -15,14 +15,14 @@ public class FinderAnotation {
     public static HashMap<String,Method> getControleurMaping(String packageName) throws Exception {
         // recuperer les classe dans le package
         List<Class<?>> listClasses = findAllControleur(packageName);
-        HashMap<String, Method> allMaping = new HashMap<>();
+        HashMap<String,Method> allMaping = new HashMap<>();
 
-        // recuperer la lsite des fonction du controleur
+        // recuperer la lsite des fonction de chaque controleur
         for (Class<?> controleur : listClasses) {
             for (Method m : controleur.getDeclaredMethods()) {
                 if (m.isAnnotationPresent(UrlMapping.class)) {
                     UrlMapping urlMap = m.getAnnotation(UrlMapping.class);
-                    allMaping.put(urlMap.value(), m);
+                    allMaping.put(urlMap.value(),m);
                 }
             }
         }

@@ -30,7 +30,7 @@ public class DispacherServlet extends HttpServlet {
             this.classeControleurs = FinderAnotation.findControleurName(pakageControleur);
             this.urlMap = FinderAnotation.getControleurMaping(pakageControleur);
         } catch (Exception e) {
-            throw new ServletException("Impossible d'initialiser la liste des controleurs", e);
+            throw new ServletException("Impossible d'initialiser la liste des controleurs",e);
         }
     }
 
@@ -48,7 +48,7 @@ public class DispacherServlet extends HttpServlet {
             out.flush();
             return;
         }
-        out.print("Path info : " + req.getPathInfo());
+        out.println("Path info : " + req.getPathInfo());
         showMaping(req.getPathInfo(), out);
 
         out.flush();
