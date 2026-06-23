@@ -9,12 +9,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.UrlMethod;
 import util.FinderAnotation;
 
 public class DispacherServlet extends HttpServlet {
 
     private List<String> classeControleurs = new ArrayList<>();
-    private HashMap<String, Method> urlMap;
+    private HashMap<UrlMethod, Method> urlMap;
 
     @Override
     public void init() throws ServletException {
@@ -48,24 +49,44 @@ public class DispacherServlet extends HttpServlet {
             out.flush();
             return;
         }
-        out.print("Path info : " + req.getPathInfo());
-        showMaping(req.getPathInfo(), out);
+        out.println("Path info : " + req.getPathInfo());
+        showMaping(req.getPathInfo(),"GET",out);
 
         out.flush();
     }
 
-    private void showMaping(String sourceUrl, PrintWriter out) {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        res.setContentType("text/plain");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+        PrintWriter out = res.getWriter();
+
+        if (classeControleurs == null || classeControleurs.isEmpty()) {
+            out.println("Aucun controleur configure ou trouve.");
+            out.flush();
+            return;
+        }
+        out.println("Path info : " + req.getPathInfo());
+        showMaping(req.getPathInfo(),"POST", out);
+
+        out.flush();
+    }
+
+    private void showMaping(String sourceUrl,String methodName, PrintWriter out) {
         // verifier si l url taper corespond a une route
-        if (urlMap.containsKey(sourceUrl)) {
-            out.println("-URL VALIDE (200)-");
-            Method method = urlMap.get(sourceUrl);
+        if (urlMap.containsKey(new UrlMethod(sourceUrl, methodName))) {
+            out.println("--URL VALIDE (200)--");
+            Method method = urlMap.get(new UrlMethod(sourceUrl, methodName));
             out.println(sourceUrl.concat("->").concat(method.getDeclaringClass().getName()).concat("::")
                     .concat(method.getName()));
         } else {
             out.println("-URL INTROUVABLE (404)-");
             this.urlMap.forEach((cle, valeur) -> {
-            out.println(cle + " -> " + valeur.getDeclaringClass().getName() + "::" +
-            valeur.getName());
+                out.println(cle + " -> " + valeur.getDeclaringClass().getName() + "::" +
+                        valeur.getName());
             });
         }
     }
