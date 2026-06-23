@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 import anotation.UrlMapping;
 
 public class UrlMethod {
@@ -21,19 +23,9 @@ public class UrlMethod {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getMethod() {
         return method;
     }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    
 
     @Override
     public boolean equals(Object obj) {
@@ -41,7 +33,16 @@ public class UrlMethod {
             return false;
         }
         UrlMethod otherObject = (UrlMethod) obj;
-
         return this.url.equals(otherObject.getUrl()) && this.method.equals(otherObject.getMethod());
+    }
+
+    @Override
+    public String toString() {
+        return "[" + this.url + "," + this.method + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.url,this.method);
     }
 }
