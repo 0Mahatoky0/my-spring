@@ -9,12 +9,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.UrlMethod;
 import util.FinderAnotation;
 
 public class DispacherServlet extends HttpServlet {
 
     private List<String> classeControleurs = new ArrayList<>();
-    private HashMap<String, Method> urlMap;
+    private HashMap<UrlMethod, Method> urlMap;
 
     @Override
     public void init() throws ServletException {

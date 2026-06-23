@@ -1,5 +1,7 @@
 package model;
 
+import anotation.UrlMapping;
+
 public class UrlMethod {
 
     private String url;
@@ -8,6 +10,11 @@ public class UrlMethod {
     public UrlMethod(String url, String method) {
         this.url = url;
         this.method = method;
+    }
+
+    public UrlMethod(UrlMapping anotationMapping) {
+        this.url = anotationMapping.value();
+        this.method = anotationMapping.method();
     }
 
     public String getUrl() {
