@@ -57,9 +57,9 @@ public class DispacherServlet extends HttpServlet {
 
     private void showMaping(String sourceUrl, PrintWriter out) {
         // verifier si l url taper corespond a une route
-        if (urlMap.containsKey(sourceUrl)) {
-            out.println("-URL VALIDE (200)-");
-            Method method = urlMap.get(sourceUrl);
+        if (urlMap.containsKey(new UrlMethod(sourceUrl,"GET"))) {
+            out.println("--URL VALIDE (200)--");
+            Method method = urlMap.get(new UrlMethod(sourceUrl,"GET"));
             out.println(sourceUrl.concat("->").concat(method.getDeclaringClass().getName()).concat("::")
                     .concat(method.getName()));
         } else {
