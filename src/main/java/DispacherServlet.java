@@ -51,7 +51,7 @@ public class DispacherServlet extends HttpServlet {
             return;
         }
         out.println("Path info : " + req.getPathInfo());
-        showMaping(req.getPathInfo(),"GET",out);
+        startProcessMapping(req.getPathInfo(), "GET", out);
 
         out.flush();
     }
@@ -71,26 +71,26 @@ public class DispacherServlet extends HttpServlet {
             return;
         }
         out.println("Path info : " + req.getPathInfo());
-        showMaping(req.getPathInfo(),"POST", out);
+        startProcessMapping(req.getPathInfo(), "POST", out);
 
         out.flush();
     }
 
-    private void showMaping(String sourceUrl,String methodName, PrintWriter out) {
+    private void startProcessMapping(String sourceUrl, String methodName, PrintWriter out) {
         // verifier si l url taper corespond a une route
         if (urlMap.containsKey(new UrlMethod(sourceUrl, methodName))) {
             out.println("--URL VALIDE (200)--");
             Method method = urlMap.get(new UrlMethod(sourceUrl, methodName));
             out.println(sourceUrl.concat("->").concat(method.getDeclaringClass().getName()).concat("::")
                     .concat(method.getName()));
-                    try {
-                        out.println("INF : Execution de la methode ...");
-                        MethodExecutor.execute(method);
-                        out.println("INF : La methode a ete executer avec succes !");
-                    } catch (Exception e) {
-                        out.println("ERREUR : Une erreur s est produit lors de l execution de la methode : " + e.getMessage());
-                        e.printStackTrace();
-                    }
+            try {
+                out.println("INF : Execution de la methode ...");
+                MethodExecutor.execute(method);
+                out.println("INF : La methode a ete executer avec succes !");
+            } catch (Exception e) {
+                out.println("ERREUR : Une erreur s est produit lors de l execution de la methode : " + e.getMessage());
+                e.printStackTrace();
+            }
         } else {
             out.println("-URL INTROUVABLE (404)-");
             this.urlMap.forEach((cle, valeur) -> {

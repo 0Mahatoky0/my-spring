@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import anotation.Controleur;
+import anotation.GetMapping;
+import anotation.PostMapping;
 import anotation.UrlMapping;
 import model.UrlMethod;
 
@@ -20,9 +22,28 @@ public class FinderAnotation {
 
         // recuperer la lsite des fonction de chaque controleur
         for (Class<?> controleur : listClasses) {
+            System.out.println("Verification de la classe " + controleur.getName());
             for (Method m : controleur.getDeclaredMethods()) {
+
+                System.out.println("Verification du method : " + m.getName());
+                //recuperer les anotations urlMapping
                 if (m.isAnnotationPresent(UrlMapping.class)) {
                     UrlMapping urlMap = m.getAnnotation(UrlMapping.class);
+                    UrlMethod urlMethod = new UrlMethod(urlMap);
+                    allMaping.put(urlMethod,m);
+                }
+
+                //recuperer les anotations getMapping
+                if(m.isAnnotationPresent(GetMapping.class)) {
+                    System.out.println("Anotation get present ");
+                    GetMapping urlMap = m.getAnnotation(GetMapping.class);
+                    UrlMethod urlMethod = new UrlMethod(urlMap);
+                    allMaping.put(urlMethod,m);
+                }
+
+                //recuperer les anotations postMapping
+                if(m.isAnnotationPresent(PostMapping.class)) {
+                    PostMapping urlMap = m.getAnnotation(PostMapping.class);
                     UrlMethod urlMethod = new UrlMethod(urlMap);
                     allMaping.put(urlMethod,m);
                 }
@@ -89,8 +110,12 @@ public class FinderAnotation {
         return classes;
     }
 
-    // public static void main(String[] args) throws Exception {
-    // List<Class<?>> classes = FinderAnotation.getClassesInPackage("controleur");
-    // System.out.println(classes);
-    // }
+    public static void main(String[] args) throws Exception {
+        HashMap<UrlMethod,Method> urlMap = FinderAnotation.getControleurMaping("controleur");
+        urlMap.forEach((url,methode) -> {
+            System.out.println(url  + "->" + methode.getName());
+        });
+
+        System.out.println("bonjour");
+    }
 }

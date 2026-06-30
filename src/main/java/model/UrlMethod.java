@@ -2,6 +2,8 @@ package model;
 
 import java.util.Objects;
 
+import anotation.GetMapping;
+import anotation.PostMapping;
 import anotation.UrlMapping;
 
 public class UrlMethod {
@@ -17,6 +19,16 @@ public class UrlMethod {
     public UrlMethod(UrlMapping anotationMapping) {
         this.url = anotationMapping.value();
         this.method = anotationMapping.method();
+    }
+
+    public UrlMethod(GetMapping getAnotationMapping) {
+        this.url = getAnotationMapping.value();
+        this.method = "GET";
+    }
+
+    public UrlMethod(PostMapping getAnotationMapping) {
+        this.url = getAnotationMapping.value();
+        this.method = "POST";
     }
 
     public String getUrl() {
