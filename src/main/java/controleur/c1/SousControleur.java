@@ -6,12 +6,12 @@ import anotation.UrlMapping;
 
 @Controleur
 public class SousControleur {
-    @GetMapping("/get/getoto")
+    @GetMapping("/get")
     public void sayGet() {
         System.out.println("Framework get");
     }
 
-    @UrlMapping("/urlMap") 
+    @UrlMapping(value = "/get",method = "GET") 
     public void sayUrlMap() {
         System.out.println("urlMap");
     }

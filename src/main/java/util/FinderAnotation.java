@@ -24,27 +24,34 @@ public class FinderAnotation {
         for (Class<?> controleur : listClasses) {
             System.out.println("Verification de la classe " + controleur.getName());
             for (Method m : controleur.getDeclaredMethods()) {
+                
+                UrlMethod urlMethod = null;
 
                 System.out.println("Verification du method : " + m.getName());
                 //recuperer les anotations urlMapping
                 if (m.isAnnotationPresent(UrlMapping.class)) {
                     UrlMapping urlMap = m.getAnnotation(UrlMapping.class);
-                    UrlMethod urlMethod = new UrlMethod(urlMap);
-                    allMaping.put(urlMethod,m);
+                    urlMethod = new UrlMethod(urlMap);
                 }
 
                 //recuperer les anotations getMapping
                 if(m.isAnnotationPresent(GetMapping.class)) {
                     System.out.println("Anotation get present ");
                     GetMapping urlMap = m.getAnnotation(GetMapping.class);
-                    UrlMethod urlMethod = new UrlMethod(urlMap);
-                    allMaping.put(urlMethod,m);
+                    urlMethod = new UrlMethod(urlMap);
                 }
 
                 //recuperer les anotations postMapping
                 if(m.isAnnotationPresent(PostMapping.class)) {
                     PostMapping urlMap = m.getAnnotation(PostMapping.class);
-                    UrlMethod urlMethod = new UrlMethod(urlMap);
+                    urlMethod = new UrlMethod(urlMap);
+                }
+
+                if(urlMethod != null) {
+                    if(allMaping.containsKey(urlMethod)) {
+                        Method firstDefin = allMaping.get(urlMethod);
+                        throw new IllegalArgumentException("L' url : " + urlMethod.getUrl() + " est redefini .\nDefinition 1 : " + firstDefin.getDeclaringClass().getName() + "::" + firstDefin.getName() + "\nDefinition 2 : " + m.getDeclaringClass().getName() + "::" + m.getName());
+                    }
                     allMaping.put(urlMethod,m);
                 }
             }
