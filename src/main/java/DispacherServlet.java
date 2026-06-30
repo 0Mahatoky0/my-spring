@@ -1,8 +1,6 @@
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -10,30 +8,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.UrlMethod;
-import util.FinderAnotation;
 import util.MethodExecutor;
 
 public class DispacherServlet extends HttpServlet {
 
-    private List<String> classeControleurs = new ArrayList<>();
     private HashMap<UrlMethod, Method> urlMap;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void init() throws ServletException {
-        this.urlMap = new HashMap<>();
-
         ServletContext context = getServletContext();
-        String pakageControleur = context.getInitParameter("controleurPackage");
-
-        try {
-            if (pakageControleur == null || pakageControleur.isBlank()) {
-                throw new ServletException("Parametre d'initialisation 'controleurPackage' manquant dans web.xml");
-            }
-            this.classeControleurs = FinderAnotation.findControleurName(pakageControleur);
-            this.urlMap = FinderAnotation.getControleurMaping(pakageControleur);
-        } catch (Exception e) {
-            throw new ServletException("Impossible d'initialiser la liste des controleurs", e);
-        }
+        this.urlMap = (HashMap<UrlMethod, Method>)context.getAttribute("urlMap");
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -45,11 +30,6 @@ public class DispacherServlet extends HttpServlet {
 
         PrintWriter out = res.getWriter();
 
-        if (classeControleurs == null || classeControleurs.isEmpty()) {
-            out.println("Aucun controleur configure ou trouve.");
-            out.flush();
-            return;
-        }
         out.println("Path info : " + req.getPathInfo());
         startProcessMapping(req.getPathInfo(), "GET", out);
 
@@ -65,11 +45,6 @@ public class DispacherServlet extends HttpServlet {
 
         PrintWriter out = res.getWriter();
 
-        if (classeControleurs == null || classeControleurs.isEmpty()) {
-            out.println("Aucun controleur configure ou trouve.");
-            out.flush();
-            return;
-        }
         out.println("Path info : " + req.getPathInfo());
         startProcessMapping(req.getPathInfo(), "POST", out);
 

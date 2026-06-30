@@ -15,7 +15,7 @@ import model.UrlMethod;
 
 public class FinderAnotation {
 
-    public static HashMap<UrlMethod,Method> getControleurMaping(String packageName) throws Exception {
+    public static HashMap<UrlMethod,Method> getControleurMaping(String packageName) throws Exception{
         // recuperer les classe dans le package
         List<Class<?>> listClasses = findAllControleur(packageName);
         HashMap<UrlMethod,Method> allMaping = new HashMap<>();
