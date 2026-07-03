@@ -20,7 +20,8 @@ public class AppInitialiser implements ServletContextListener {
             throw new IllegalStateException("Parametre d'initialisation 'controleurPackage' manquant dans web.xml");
         }
         try {
-            HashMap<UrlMethod, Method> urlMap = FinderAnotation.getControleurMaping(pakageControleur);
+            HashMap<UrlMethod, Method> urlMap = new HashMap<>();
+            FinderAnotation.getControleurMaping(pakageControleur,urlMap);
             context.setAttribute("urlMap", urlMap);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);

@@ -15,10 +15,9 @@ import model.UrlMethod;
 
 public class FinderAnotation {
 
-    public static HashMap<UrlMethod,Method> getControleurMaping(String packageName) throws Exception{
+    public static void getControleurMaping(String packageName,HashMap<UrlMethod, Method> urlMaps) throws Exception{
         // recuperer les classe dans le package
         List<Class<?>> listClasses = findAllControleur(packageName);
-        HashMap<UrlMethod,Method> allMaping = new HashMap<>();
 
         // recuperer la lsite des fonction de chaque controleur
         for (Class<?> controleur : listClasses) {
@@ -48,15 +47,14 @@ public class FinderAnotation {
                 }
 
                 if(urlMethod != null) {
-                    if(allMaping.containsKey(urlMethod)) {
-                        Method firstDefin = allMaping.get(urlMethod);
+                    if(urlMaps.containsKey(urlMethod)) {
+                        Method firstDefin = urlMaps.get(urlMethod);
                         throw new IllegalArgumentException("L' url : " + urlMethod.getUrl() + " est redefini .\nDefinition 1 : " + firstDefin.getDeclaringClass().getName() + "::" + firstDefin.getName() + "\nDefinition 2 : " + m.getDeclaringClass().getName() + "::" + m.getName());
                     }
-                    allMaping.put(urlMethod,m);
+                    urlMaps.put(urlMethod,m);
                 }
             }
         }
-        return allMaping;
     }
 
     public static List<Class<?>> findAllControleur(String packageName) throws Exception {
@@ -118,8 +116,9 @@ public class FinderAnotation {
     }
 
     public static void main(String[] args) throws Exception {
-        HashMap<UrlMethod,Method> urlMap = FinderAnotation.getControleurMaping("controleur");
-        urlMap.forEach((url,methode) -> {
+        HashMap<UrlMethod,Method> urlMaps = new HashMap<>();
+        FinderAnotation.getControleurMaping("controleur",urlMaps);
+        urlMaps.forEach((url,methode) -> {
             System.out.println(url  + "->" + methode.getName());
         });
 

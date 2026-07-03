@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -18,7 +19,7 @@ public class DispacherServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         ServletContext context = getServletContext();
-        this.urlMap = (HashMap<UrlMethod, Method>)context.getAttribute("urlMap");
+        this.urlMap = (HashMap<UrlMethod, Method>) context.getAttribute("urlMap");
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -31,7 +32,7 @@ public class DispacherServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
 
         out.println("Path info : " + req.getPathInfo());
-        startProcessMapping(req.getPathInfo(), "GET", out);
+        startProcessMapping(req,res, "GET", out);
 
         out.flush();
     }
@@ -46,21 +47,26 @@ public class DispacherServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
 
         out.println("Path info : " + req.getPathInfo());
-        startProcessMapping(req.getPathInfo(), "POST", out);
+        startProcessMapping(req,res, "POST", out);
 
         out.flush();
     }
 
-    private void startProcessMapping(String sourceUrl, String methodName, PrintWriter out) {
+    private void startProcessMapping(HttpServletRequest req,HttpServletResponse res, String methodName, PrintWriter out) {
         // verifier si l url taper corespond a une route
-        if (urlMap.containsKey(new UrlMethod(sourceUrl, methodName))) {
+        if (urlMap.containsKey(new UrlMethod(req.getPathInfo(), methodName))) {
             out.println("--URL VALIDE (200)--");
-            Method method = urlMap.get(new UrlMethod(sourceUrl, methodName));
-            out.println(sourceUrl.concat("->").concat(method.getDeclaringClass().getName()).concat("::")
+            Method method = urlMap.get(new UrlMethod(req.getPathInfo(), methodName));
+            out.println(req.getPathInfo().concat("->").concat(method.getDeclaringClass().getName()).concat("::")
                     .concat(method.getName()));
             try {
                 out.println("INF : Execution de la methode ...");
-                MethodExecutor.execute(method);
+                Object resultExecution = MethodExecutor.execute(method);
+                if (resultExecution instanceof String) {
+                    //envoyer vers la vues corespondente
+                    RequestDispatcher dispacher = req.getRequestDispatcher("WEB-INF/views/" + resultExecution.toString());
+                    dispacher.forward(req,res);
+                }
                 out.println("INF : La methode a ete executer avec succes !");
             } catch (Exception e) {
                 out.println("ERREUR : Une erreur s est produit lors de l execution de la methode : " + e.getMessage());

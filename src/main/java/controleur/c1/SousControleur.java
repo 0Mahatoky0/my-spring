@@ -11,6 +11,11 @@ public class SousControleur {
         System.out.println("Framework get");
     }
 
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "helloPage";
+    }
+
     @UrlMapping(value = "/get",method = "GET") 
     public void sayUrlMap() {
         System.out.println("urlMap");
