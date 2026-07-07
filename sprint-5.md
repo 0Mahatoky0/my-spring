@@ -4,11 +4,11 @@
   - envoyer des donnes vers les vues
 
 # comment 
-- cree une classe ModelAndView
-  - atribut :
+- [ok] cree une classe ModelAndView
+  - [ok] atribut :
     - view
     - atribut <String,Object>
-- dans les controleurs on return cette calsse 
+- dans les controleurs on return cette classe 
 - dans frontServlet lors de l invocation de la fonction associer a l url   
   - on verifie si le valeur de retour est ModelAndView
   - si oui :

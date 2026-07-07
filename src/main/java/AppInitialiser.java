@@ -15,14 +15,18 @@ public class AppInitialiser implements ServletContextListener {
         // initialiser les routes de l aplications
         ServletContext context = sce.getServletContext();
         String pakageControleur = context.getInitParameter("controleurPackage");
+        String pageResolvePrefix = context.getInitParameter("pageResolvePrefix");
+        String pageResolveSufix = context.getInitParameter("pageResolveSufix");
 
         if (pakageControleur == null || pakageControleur.isBlank()) {
             throw new IllegalStateException("Parametre d'initialisation 'controleurPackage' manquant dans web.xml");
         }
         try {
             HashMap<UrlMethod, Method> urlMap = new HashMap<>();
-            FinderAnotation.getControleurMaping(pakageControleur,urlMap);
+            FinderAnotation.getControleurMaping(pakageControleur, urlMap);
             context.setAttribute("urlMap", urlMap);
+            context.setAttribute("pageResolvePrefix", pageResolvePrefix);
+            context.setAttribute("pageResolveSufix", pageResolveSufix);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
