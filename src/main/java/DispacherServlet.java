@@ -30,83 +30,80 @@ public class DispacherServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        res.setContentType("text/plain");
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-        PrintWriter out = res.getWriter();
-
-        out.println("Path info : " + req.getServletPath());
-        startProcessMapping(req, res, "GET", out);
-
-        out.flush();
+        startProcessMapping(req, res, "GET");
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/plain");
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-        PrintWriter out = res.getWriter();
-
-        out.println("Path info : " + req.getServletPath());
-        startProcessMapping(req, res, "POST", out);
-
-        out.flush();
+        startProcessMapping(req, res, "POST");
     }
 
-    private void startProcessMapping(HttpServletRequest req, HttpServletResponse res, String methodName,
-            PrintWriter out) {
-        // verifier si ca cores
+    private void startProcessMapping(HttpServletRequest req, HttpServletResponse res, String methodName) throws IOException {
+        // resoudre le cors
+        resolveCors(res);
+        res.getWriter().println("[INF] : Path info : " + req.getServletPath());
         // verifier si l url taper corespond a une route
         if (urlMap.containsKey(new UrlMethod(req.getServletPath(), methodName))) {
-            out.println("--URL VALIDE (200)--");
+            res.getWriter().println("[INF] : URL VALIDE (code 200) ");
+
             Method method = urlMap.get(new UrlMethod(req.getServletPath(), methodName));
-            out.println(req.getServletPath().concat("->").concat(method.getDeclaringClass().getName()).concat("::")
-                    .concat(method.getName()));
+            res.getWriter().println(req.getServletPath().concat("->").concat(toString(method)));
             try {
-                out.println("INF : Execution de la methode ...");
-
+                res.getWriter().println("[INF] : Execution de la methode ...");
                 Object resultExecution = MethodExecutor.execute(method);
-
+                
                 // si il retourne uniquement une string
                 if (resultExecution instanceof String) {
                     // envoyer vers la vues corespondente
                     RequestDispatcher dispacher = req
-                            .getRequestDispatcher("/WEB-INF/views/" + resultExecution.toString());
+                            .getRequestDispatcher(resolveNameView(resultExecution.toString()));
                     dispacher.forward(req, res);
                 }
 
-                // si il retourn une model view
                 if (resultExecution instanceof ModelAndView) {
-                    // envoyer vers la vues corespondente
+                    // envoyer vers la vue corespondente
                     ModelAndView modelAndView = (ModelAndView) resultExecution;
                     RequestDispatcher dispacher = req
-                            .getRequestDispatcher(pageResolvePrefix + modelAndView.getView() + pageResolveSufix);
-
+                            .getRequestDispatcher(resolveNameView(modelAndView.getView()));
                     // envoyer les models vers la page
                     for (Map.Entry<String, Object> model : modelAndView.getAttributes().entrySet()) {
-                        req.setAttribute(model.getKey(),model.getValue());
-                        System.out.println("OULALA : " + model.getKey());
+                        req.setAttribute(model.getKey(), model.getValue());
                     }
-
                     dispacher.forward(req, res);
                 }
-
-                out.println("INF : La methode a ete executer avec succes !");
+                res.getWriter().println("[INF] : La methode a ete executer avec succes !");
             } catch (Exception e) {
-                out.println("ERREUR : Une erreur s est produit lors de l execution de la methode : " + e.getMessage());
+                res.getWriter().println("[ERROR] : Une erreur s est produit lors de l execution de la methode : " + e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            out.println("-URL INTROUVABLE (404)-");
-            this.urlMap.forEach((cle, valeur) -> {
-                out.println(cle + " -> " + valeur.getDeclaringClass().getName() + "::" +
-                        valeur.getName());
-            });
+            res.getWriter().println("[ERROR] : URL INTROUVABLE (code 404)");
+            showAllUrlMapping(res);
         }
+        res.getWriter().flush();
+    }
+
+    private void showAllUrlMapping(HttpServletResponse res) throws IOException {
+        res.getWriter().println("[INF] : LISTE DES URL PRESENT");
+        for (Map.Entry<UrlMethod, Method> mapping : this.urlMap.entrySet()) {
+            res.getWriter().println(mapping.getKey() + " -> " + toString(mapping.getValue()));
+        }
+        res.getWriter().println("[INF] : FIN LISTE ");
+    }
+
+    private String resolveNameView(String viewName) {
+        return pageResolvePrefix + viewName + pageResolveSufix;
+    }
+
+    private void resolveCors(HttpServletResponse res) {
+        res.setContentType("text/plain");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    }
+
+    private String toString(Method method) {
+        return method.getDeclaringClass().getName().concat("::")
+                    .concat(method.getName());
     }
 }
