@@ -3,8 +3,13 @@
 
 # comment 
 - creer anotation ResponseBody
-- lors de l invocation du controller 
-- verifier si le controller possede une anotation responseBody
+- pour une fonciton exucuter 
+- verifier si la fonciton possede une anotation responseBody ou sa classe mere possede cette classe 
+  - fonction 
+    - isApiMethod
+      - oui
+        - transformer l objet en json
+        - print cette resultat
 - si oui 
-  - transformer en json l objet
+  - transformer en json l objet retour de la methode
   - renvoyer une repose textuel contennant cette response
