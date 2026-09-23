@@ -10,12 +10,18 @@ import java.util.List;
 import anotation.Controleur;
 import anotation.GetMapping;
 import anotation.PostMapping;
+import anotation.ResponseBody;
 import anotation.UrlMapping;
 import model.UrlMethod;
 
 public class FinderAnotation {
 
-    public static void getControleurMaping(String packageName,HashMap<UrlMethod, Method> urlMaps) throws Exception{
+    public static boolean isAnApiMethod(Method method) {
+        return method.isAnnotationPresent(ResponseBody.class)
+                | method.getClass().isAnnotationPresent(ResponseBody.class);
+    }
+
+    public static void getControleurMaping(String packageName, HashMap<UrlMethod, Method> urlMaps) throws Exception {
         // recuperer les classe dans le package
         List<Class<?>> listClasses = findAllControleur(packageName);
 
@@ -23,35 +29,38 @@ public class FinderAnotation {
         for (Class<?> controleur : listClasses) {
             System.out.println("Verification de la classe " + controleur.getName());
             for (Method m : controleur.getDeclaredMethods()) {
-                
+
                 UrlMethod urlMethod = null;
 
                 System.out.println("Verification du method : " + m.getName());
-                //recuperer les anotations urlMapping
+                // recuperer les anotations urlMapping
                 if (m.isAnnotationPresent(UrlMapping.class)) {
                     UrlMapping urlMap = m.getAnnotation(UrlMapping.class);
                     urlMethod = new UrlMethod(urlMap);
                 }
 
-                //recuperer les anotations getMapping
-                if(m.isAnnotationPresent(GetMapping.class)) {
+                // recuperer les anotations getMapping
+                if (m.isAnnotationPresent(GetMapping.class)) {
                     System.out.println("Anotation get present ");
                     GetMapping urlMap = m.getAnnotation(GetMapping.class);
                     urlMethod = new UrlMethod(urlMap);
                 }
 
-                //recuperer les anotations postMapping
-                if(m.isAnnotationPresent(PostMapping.class)) {
+                // recuperer les anotations postMapping
+                if (m.isAnnotationPresent(PostMapping.class)) {
                     PostMapping urlMap = m.getAnnotation(PostMapping.class);
                     urlMethod = new UrlMethod(urlMap);
                 }
 
-                if(urlMethod != null) {
-                    if(urlMaps.containsKey(urlMethod)) {
+                if (urlMethod != null) {
+                    if (urlMaps.containsKey(urlMethod)) {
                         Method firstDefin = urlMaps.get(urlMethod);
-                        throw new IllegalArgumentException("L' url : " + urlMethod.getUrl() + " est redefini .\nDefinition 1 : " + firstDefin.getDeclaringClass().getName() + "::" + firstDefin.getName() + "\nDefinition 2 : " + m.getDeclaringClass().getName() + "::" + m.getName());
+                        throw new IllegalArgumentException(
+                                "L' url : " + urlMethod.getUrl() + " est redefini .\nDefinition 1 : "
+                                        + firstDefin.getDeclaringClass().getName() + "::" + firstDefin.getName()
+                                        + "\nDefinition 2 : " + m.getDeclaringClass().getName() + "::" + m.getName());
                     }
-                    urlMaps.put(urlMethod,m);
+                    urlMaps.put(urlMethod, m);
                 }
             }
         }
@@ -116,10 +125,10 @@ public class FinderAnotation {
     }
 
     public static void main(String[] args) throws Exception {
-        HashMap<UrlMethod,Method> urlMaps = new HashMap<>();
-        FinderAnotation.getControleurMaping("controleur",urlMaps);
-        urlMaps.forEach((url,methode) -> {
-            System.out.println(url  + "->" + methode.getName());
+        HashMap<UrlMethod, Method> urlMaps = new HashMap<>();
+        FinderAnotation.getControleurMaping("controleur", urlMaps);
+        urlMaps.forEach((url, methode) -> {
+            System.out.println(url + "->" + methode.getName());
         });
 
         System.out.println("bonjour");

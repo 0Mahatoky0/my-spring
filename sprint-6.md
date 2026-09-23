@@ -2,7 +2,7 @@
 - Permetre au developper de cree une api rest
 
 # comment 
-- creer anotation ResponseBody
+- [ok] creer anotation ResponseBody
 - pour une fonciton exucuter 
 - verifier si la fonciton possede une anotation responseBody ou sa classe mere possede cette classe 
   - fonction 
