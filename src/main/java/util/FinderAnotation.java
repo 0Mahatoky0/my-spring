@@ -16,7 +16,7 @@ import model.UrlMethod;
 
 public class FinderAnotation {
 
-    public static boolean isAnApiMethod(Method method) {
+    public static boolean haveApiAnotation(Method method) {
         return method.isAnnotationPresent(ResponseBody.class)
                 | method.getClass().isAnnotationPresent(ResponseBody.class);
     }
