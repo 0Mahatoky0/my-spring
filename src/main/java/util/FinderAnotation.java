@@ -18,7 +18,7 @@ public class FinderAnotation {
 
     public static boolean haveApiAnotation(Method method) {
         return method.isAnnotationPresent(ResponseBody.class)
-                | method.getClass().isAnnotationPresent(ResponseBody.class);
+                || method.getClass().isAnnotationPresent(ResponseBody.class);
     }
 
     public static void getControleurMaping(String packageName, HashMap<UrlMethod, Method> urlMaps) throws Exception {

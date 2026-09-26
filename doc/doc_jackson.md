@@ -14,7 +14,7 @@ Pour que Jackson fonctionne correctement, la classe Java cible doit comporter :
 
 ### Opérations de base : `ObjectMapper` 🛠️
 
-```
+```java
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 ObjectMapper mapper = new ObjectMapper();
@@ -23,7 +23,7 @@ ObjectMapper mapper = new ObjectMapper();
 
 #### 📤 Sérialisation (Objet Java ➡️ JSON)
 
-```
+```java
 Etudiant etudiant = new Etudiant("Alice", 22);
 
 // Convertit l'objet en chaîne JSON
@@ -34,7 +34,7 @@ String json = mapper.writeValueAsString(etudiant);
 
 #### 📥 Désérialisation (JSON ➡️ Objet Java)
 
-```
+```java
 String jsonInput = "{\"nom\":\"Bob\",\"age\":20}";
 
 // Convertit la chaîne JSON en objet Java
@@ -54,7 +54,7 @@ Placées directement sur les attributs de vos classes Java pour ajuster le compo
 
 ### Exemple de classe annotée :
 
-```
+```java
 import com.fasterxml.jackson.annotation.*;
 import java.time.LocalDate;
 
@@ -85,7 +85,7 @@ Par défaut, Jackson lève une exception (`UnrecognizedPropertyException`) si le
 
 #### Option 1 : Via annotation sur la classe (Recommandé)
 
-```
+```java
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MonObjet {
     // ...
@@ -95,7 +95,7 @@ public class MonObjet {
 
 #### Option 2 : Configuration globale sur l'ObjectMapper
 
-```
+```java
 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 ```
@@ -104,7 +104,7 @@ mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 Pour rendre le JSON lisible avec des retours à la ligne et de l'indentation :
 
-```
+```java
 // Option globale sur le mapper
 mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -117,7 +117,7 @@ String jsonLisible = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
 
 Pour désérialiser un tableau JSON vers une `List<T>` Java :
 
-```
+```java
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 
@@ -137,7 +137,7 @@ Pour gérer correctement des types comme `LocalDate` ou `LocalDateTime` :
 
 1. Ajouter la dépendance Maven :
 
-```
+```xml
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-jsr310</artifactId>
@@ -147,7 +147,7 @@ Pour gérer correctement des types comme `LocalDate` ou `LocalDateTime` :
 
 2. Enregistrer le module sur l'`ObjectMapper` :
 
-```
+```java
 mapper.registerModule(new JavaTimeModule());
 // Pour éviter d'écrire les dates sous forme de timestamps numériques :
 mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
