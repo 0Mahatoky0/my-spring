@@ -14,3 +14,6 @@
 - verifier :
   - contenu html , jsp en priorite
   - servlet a la fin
+
+# next step
+- migerer le projet vers un projet maven
