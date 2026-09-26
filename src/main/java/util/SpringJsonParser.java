@@ -3,11 +3,11 @@ package util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JsonParser {
+public class SpringJsonParser {
 
     private final ObjectMapper mapper;
 
-    public JsonParser(ObjectMapper mapper) {
+    public SpringJsonParser(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 

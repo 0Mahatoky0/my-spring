@@ -1,6 +1,7 @@
 package util;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class FinderAnotation {
 
     public static boolean haveApiAnotation(Method method) {
         return method.isAnnotationPresent(ResponseBody.class)
-                || method.getClass().isAnnotationPresent(ResponseBody.class);
+                || method.getDeclaringClass().isAnnotationPresent(ResponseBody.class);
     }
 
     public static void getControleurMaping(String packageName, HashMap<UrlMethod, Method> urlMaps) throws Exception {
