@@ -7,12 +7,15 @@ BUILD_DIR="build"
 LIB_DIR="lib"
 SERVLET_API_JAR="$LIB_DIR/servlet-api.jar"
 
+# dependence pour le parsing jackson
+JACKSON="$LIB_DIR/jackson-annotations-2.18.2.jar:$LIB_DIR/jackson-core-2.18.2.jar:$LIB_DIR/jackson-databind-2.18.2.jar"
+
 # Nettoyage et création du répertoire temporaire
 rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 # Compilation des fichiers Java avec le JAR des Servlets
 find $SRC_DIR -name "*.java" > sources.txt
-javac -cp $SERVLET_API_JAR:$MY_SPRING_JAR -d $BUILD_DIR @sources.txt
+javac -cp $SERVLET_API_JAR:$JACKSON -d $BUILD_DIR @sources.txt
 rm sources.txt
 
 # Générer le fichier .jar dans le dossier build

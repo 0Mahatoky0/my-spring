@@ -11,6 +11,9 @@ public class UrlMethod {
     private String url;
     private String method;
 
+    public UrlMethod() {
+    }
+
     public UrlMethod(String url, String method) {
         this.url = url;
         this.method = method;

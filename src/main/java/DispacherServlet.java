@@ -30,23 +30,23 @@ public class DispacherServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        startProcessMapping(req, res, "GET");
+        startProcessMapping(req, res);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        startProcessMapping(req, res, "POST");
+        startProcessMapping(req, res);
     }
 
-    private void startProcessMapping(HttpServletRequest req, HttpServletResponse res, String methodName) throws IOException {
+    private void startProcessMapping(HttpServletRequest req, HttpServletResponse res) throws IOException {
         // resoudre le cors
         resolveCors(res);
         res.getWriter().println("[INF] : Path info : " + req.getServletPath());
         // verifier si l url taper corespond a une route
-        if (urlMap.containsKey(new UrlMethod(req.getServletPath(), methodName))) {
+        if (urlMap.containsKey(new UrlMethod(req.getServletPath(), req.getMethod()))) {
             res.getWriter().println("[INF] : URL VALIDE (code 200) ");
 
-            Method method = urlMap.get(new UrlMethod(req.getServletPath(), methodName));
+            Method method = urlMap.get(new UrlMethod(req.getServletPath(), req.getMethod()));
             res.getWriter().println(req.getServletPath().concat("->").concat(toString(method)));
             try {
                 res.getWriter().println("[INF] : Execution de la methode ...");
