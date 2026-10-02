@@ -52,9 +52,14 @@ public class DispacherServlet extends HttpServlet {
         resolveCors(res);
         // verifier si l url taper corespond a une route
         if (urlMap.containsKey(new UrlMethod(req.getServletPath(), req.getMethod()))) {
-            Method method = urlMap.get(new UrlMethod(req.getServletPath(), req.getMethod()));
+        Method method = urlMap.get(new UrlMethod(req.getServletPath(), req.getMethod()));
             try {
-                Object resultExecution = MethodExecutor.execute(method);
+                Object resultExecution = null;
+                if(method.getParameterCount() != 0) {
+                    resultExecution = MethodExecutor.execute(method,req);
+                } else {
+                    resultExecution = MethodExecutor.execute(method);
+                }
                  // verifier si la methode est annote api
                 if (FinderAnotation.haveApiAnotation(method)) {
                     processApi(req, res,resultExecution);
@@ -113,7 +118,7 @@ public class DispacherServlet extends HttpServlet {
         res.setContentType("text/plain");
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        // res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     }
 
     private String toString(Method method) {
