@@ -17,8 +17,10 @@ public class MethodExecutor {
         return method.invoke(instance);
     }
 
-    public static Object execute(Method method,HttpServletRequest req) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        //cree une instance de la classe qui va executer
+    public static Object execute(Method method, HttpServletRequest req)
+            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException {
+        // cree une instance de la classe qui va executer
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
         return method.invoke(instance, getArgsValues(method, req));
     }
@@ -31,22 +33,25 @@ public class MethodExecutor {
             if (valueString == null) {
                 paramsValues.add(null);
             }
-            paramsValues.add(parseString(valueString, parameter.getParameterizedType()));
+            paramsValues.add(getParameterValue(parameter,req));
         }
         return paramsValues.toArray();
     }
 
-    public static Object parseString(String input, Type targetType) {
+    public static Object getParameterValue(Parameter parameter,HttpServletRequest req) {
+        Type targetType = parameter.getParameterizedType();
+        String inputValue = req.getParameter(parameter.getName());
+
         if (targetType == String.class) {
-            return input;
+            return inputValue;
         } else if (targetType == Double.class || targetType == double.class) {
-            return Double.valueOf(input);
+            return Double.valueOf(inputValue);
         } else if (targetType == Integer.class || targetType == int.class) {
-            return Integer.valueOf(input);
+            return Integer.valueOf(inputValue);
         } else if (targetType == Boolean.class || targetType == boolean.class) {
-            return Boolean.valueOf(input);
+            return Boolean.valueOf(inputValue);
         } else if (targetType == Long.class || targetType == long.class) {
-            return Long.valueOf(input);
+            return Long.valueOf(inputValue);
         }
         throw new IllegalArgumentException("Type non supporté : " + targetType.getTypeName());
     }
