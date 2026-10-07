@@ -65,17 +65,18 @@ public class MethodExecutor {
     private static Object createInstance(Type type, String base, String instanceName, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException {
+        String parameterValueString = getParametterValue(base, instanceName, req);
         if (type == String.class) {
-            return getParametterValue(base, instanceName, req);
+            return parameterValueString;
         } else if (type == Double.class || type == double.class) {
-            return Double.valueOf(getParametterValue(base, instanceName, req));
+            return Double.valueOf(parameterValueString);
         } else if (type == Integer.class || type == int.class) {
-            System.out.println("HELLO: " + getParametterValue(base, instanceName, req));
-            return Integer.valueOf(getParametterValue(base, instanceName, req));
+            System.out.println("HELLO: " + parameterValueString);
+            return Integer.valueOf(parameterValueString);
         } else if (type == Boolean.class || type == boolean.class) {
-            return Boolean.valueOf(getParametterValue(base, instanceName, req));
+            return Boolean.valueOf(parameterValueString);
         } else if (type == Long.class || type == long.class) {
-            return Long.valueOf(getParametterValue(base, instanceName, req));
+            return Long.valueOf(parameterValueString);
         } else if (type.getClass() instanceof Object) {
             String nextObjectBase = "";
             if (base != null) {
