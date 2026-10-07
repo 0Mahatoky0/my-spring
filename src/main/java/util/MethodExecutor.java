@@ -43,31 +43,23 @@ public class MethodExecutor {
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException {
         Type targetType = parameter.getParameterizedType();
-        System.out.println("FIX: " + targetType.getTypeName());
         return createInstance(targetType, null, parameter.getName(), req);
     }
 
-    private static Object getObjectValue(Type type, String base, String instanceName, HttpServletRequest req)
+    private static Object getObjectValue(Type type, String base, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException {
-        System.out.println("FIX: ->" + type.getTypeName());
         if (type instanceof Class<?>) {
-            Object instance = ((Class<?>)type).getDeclaredConstructor().newInstance();
+            Object instance = ((Class<?>) type).getDeclaredConstructor().newInstance();
 
             for (Field field : instance.getClass().getDeclaredFields()) {
-                System.out.println("FIX: " + field.getName());
-                String baseInstanceName = "";
-                if(base != null) {
-                    baseInstanceName = baseInstanceName.concat(".").concat(instanceName);
-                } else {
-                    baseInstanceName = instanceName;
-                }
                 ReflectionUtils.getSetter(field).invoke(instance,
-                        createInstance(field.getType(), baseInstanceName, field.getName(), req));
+                        createInstance(field.getType(), base, field.getName(), req));
             }
             return instance;
         }
-        throw new RuntimeException("Erreur type doit etre une instance de class or il est une instance de : " + type.getTypeName());
+        throw new RuntimeException(
+                "Erreur type doit etre une instance de class or il est une instance de : " + type.getTypeName());
     }
 
     private static Object createInstance(Type type, String base, String instanceName, HttpServletRequest req)
@@ -78,20 +70,26 @@ public class MethodExecutor {
         } else if (type == Double.class || type == double.class) {
             return Double.valueOf(getParametterValue(base, instanceName, req));
         } else if (type == Integer.class || type == int.class) {
+            System.out.println("HELLO: " + getParametterValue(base, instanceName, req));
             return Integer.valueOf(getParametterValue(base, instanceName, req));
         } else if (type == Boolean.class || type == boolean.class) {
             return Boolean.valueOf(getParametterValue(base, instanceName, req));
         } else if (type == Long.class || type == long.class) {
             return Long.valueOf(getParametterValue(base, instanceName, req));
         } else if (type.getClass() instanceof Object) {
-
-            return getObjectValue(type, base, instanceName, req);
+            String nextObjectBase = "";
+            if (base != null) {
+                nextObjectBase = nextObjectBase.concat(base).concat(".");
+            }
+            nextObjectBase = nextObjectBase.concat(instanceName);
+            return getObjectValue(type, nextObjectBase, req);
         }
         throw new IllegalArgumentException("Type non supporté : " + type.getTypeName());
     }
 
     private static String getParametterValue(String base, String instanceName, HttpServletRequest req) {
-        System.out.println("FIX: " + instanceName);
+        System.out.println("FIX: Creer instance : " + base + "." + instanceName);
+
         if (base == null) {
             return req.getParameter(instanceName);
         } else {
