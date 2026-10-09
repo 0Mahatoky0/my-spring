@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -71,13 +72,15 @@ public class MethodExecutor {
         } else if (type == Double.class || type == double.class) {
             return Double.valueOf(parameterValueString);
         } else if (type == Integer.class || type == int.class) {
-            System.out.println("HELLO: " + parameterValueString);
             return Integer.valueOf(parameterValueString);
         } else if (type == Boolean.class || type == boolean.class) {
             return Boolean.valueOf(parameterValueString);
         } else if (type == Long.class || type == long.class) {
             return Long.valueOf(parameterValueString);
-        } else if (type.getClass() instanceof Object) {
+        } else if (type == Date.class) {
+            return Date.valueOf(parameterValueString);
+        }
+         else if (type.getClass() instanceof Object) {
             String nextObjectBase = "";
             if (base != null) {
                 nextObjectBase = nextObjectBase.concat(base).concat(".");
