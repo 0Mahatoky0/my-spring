@@ -12,8 +12,8 @@ On match avec les args
 On put les donne dans les variables
 
 ## todo
-- Creer methode dans execute(Method,HttpRequest) dans queryExecutor
-  - recuprer les nom des arguments de la fonction
-  - recuperer la valeur 
-  - transformer le String au type de l arguments
-  - executer la fonction avec les arguments passer
+- [ok] Creer methode dans execute(Method,HttpRequest) dans queryExecutor
+  - [ok] recuprer les nom des arguments de la fonction
+  - [ok] recuperer la valeur 
+  - [ok] transformer le String au type de l arguments
+  - [ok] executer la fonction avec les arguments passer

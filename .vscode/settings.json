@@ -1,0 +1,11 @@
+{
+    "java.project.sourcePaths": [
+        "src/main/java"
+    ],
+    "java.project.referencedLibraries": [
+        "/home/max/Fianarana/main/s4/webdin/projet/my-spring/lib/jackson-core-2.18.2.jar",
+        "/home/max/Fianarana/main/s4/webdin/projet/my-spring/lib/servlet-api.jar",
+        "/home/max/Fianarana/main/s4/webdin/projet/my-spring/lib/jackson-databind-2.18.2.jar",
+        "/home/max/Fianarana/main/s4/webdin/projet/my-spring/lib/jackson-annotations-2.18.2.jar"
+    ]
+}

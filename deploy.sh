@@ -29,3 +29,5 @@ echo ""
 echo "Déploiement terminé. Redémarrez Tomcat si nécessaire."
 
 echo ""
+
+# ../user-my-spring/deploy.sh
