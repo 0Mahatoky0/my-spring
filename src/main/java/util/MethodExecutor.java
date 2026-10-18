@@ -9,7 +9,8 @@ import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Properties;
+
+import javax.naming.NameNotFoundException;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -33,7 +34,7 @@ public class MethodExecutor {
 
     public  Object execute(Method method, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException, IOException, ServletException {
+            NoSuchMethodException, SecurityException, IOException, ServletException, NameNotFoundException {
         // cree une instance de la classe qui va executer
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
         System.out.println("FIX: Q -> " + Arrays.toString(getArgsValues(method, req)));
@@ -42,7 +43,7 @@ public class MethodExecutor {
 
     private  Object[] getArgsValues(Method method, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException, IOException, ServletException {
+            NoSuchMethodException, SecurityException, IOException, ServletException, NameNotFoundException {
         ArrayList<Object> paramsValues = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
             System.out.println("NEED: ->" + parameter.getName());
@@ -53,14 +54,14 @@ public class MethodExecutor {
 
     private Object getParameterValue(Parameter parameter, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException, IOException, ServletException {
+            NoSuchMethodException, SecurityException, IOException, ServletException, NameNotFoundException {
         Type targetType = parameter.getParameterizedType();
         return createInstance(targetType, null, parameter.getName(), req);
     }
 
     private Object getObjectValue(Type type, String base, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException, IOException, ServletException {
+            NoSuchMethodException, SecurityException, IOException, ServletException, NameNotFoundException {
         if (type instanceof Class<?>) {
             Object instance = ((Class<?>) type).getDeclaredConstructor().newInstance();
 
@@ -76,7 +77,7 @@ public class MethodExecutor {
 
     private Object createInstance(Type type, String base, String instanceName, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException, IOException, ServletException {
+            NoSuchMethodException, SecurityException, IOException, ServletException, NameNotFoundException {
         String parameterValueString = getParametterValue(base, instanceName, req);
         if (type == String.class) {
             return parameterValueString;
@@ -104,7 +105,7 @@ public class MethodExecutor {
         throw new IllegalArgumentException("Type non supporté : " + type.getTypeName());
     }
 
-    private UploadFile createInstanceUploadFile(String filename,HttpServletRequest req) throws IOException, ServletException {
+    private UploadFile createInstanceUploadFile(String filename,HttpServletRequest req) throws IOException, ServletException, NameNotFoundException {
         return new UploadFile(req.getPart(filename),this.servletContext);
     }
 

@@ -1,10 +1,13 @@
 package model;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+
+import javax.naming.NameNotFoundException;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.Part;
@@ -17,7 +20,7 @@ public class UploadFile {
 
     private String uploadDir;
 
-    public UploadFile(Part part,ServletContext context) throws IOException {
+    public UploadFile(Part part,ServletContext context) throws IOException, NameNotFoundException {
         this.name = part.getSubmittedFileName();
         this.inputStream = part.getInputStream();
         // 1. Extraire l'extension
@@ -25,7 +28,12 @@ public class UploadFile {
         if (i > 0) {
             this.extention = name.substring(i + 1);
         }
-        uploadDir = context.getAttribute("fileUploadDir").toString();
+        
+        if(context.getAttribute("fileUploadDir") != null) {
+            uploadDir = context.getAttribute("fileUploadDir").toString();
+        } else {
+            throw new NameNotFoundException("[ERROR] : la configuration de 'fileUploadDir' n est pas trouver. Initialiser le dans app.properties");
+        }
     }
 
     public void saveFile() throws IOException {
