@@ -1,5 +1,6 @@
 package util;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,7 +10,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import model.UploadFile;
 
 public class MethodExecutor {
 
@@ -22,7 +25,7 @@ public class MethodExecutor {
 
     public static Object execute(Method method, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException {
+            NoSuchMethodException, SecurityException, IOException, ServletException {
         // cree une instance de la classe qui va executer
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
         System.out.println("FIX: Q -> " + Arrays.toString(getArgsValues(method, req)));
@@ -31,7 +34,7 @@ public class MethodExecutor {
 
     private static Object[] getArgsValues(Method method, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException {
+            NoSuchMethodException, SecurityException, IOException, ServletException {
         ArrayList<Object> paramsValues = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
             System.out.println("NEED: ->" + parameter.getName());
@@ -42,14 +45,14 @@ public class MethodExecutor {
 
     private static Object getParameterValue(Parameter parameter, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException {
+            NoSuchMethodException, SecurityException, IOException, ServletException {
         Type targetType = parameter.getParameterizedType();
         return createInstance(targetType, null, parameter.getName(), req);
     }
 
     private static Object getObjectValue(Type type, String base, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException {
+            NoSuchMethodException, SecurityException, IOException, ServletException {
         if (type instanceof Class<?>) {
             Object instance = ((Class<?>) type).getDeclaredConstructor().newInstance();
 
@@ -65,7 +68,7 @@ public class MethodExecutor {
 
     private static Object createInstance(Type type, String base, String instanceName, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException {
+            NoSuchMethodException, SecurityException, IOException, ServletException {
         String parameterValueString = getParametterValue(base, instanceName, req);
         if (type == String.class) {
             return parameterValueString;
@@ -79,6 +82,8 @@ public class MethodExecutor {
             return Long.valueOf(parameterValueString);
         } else if (type == Date.class) {
             return Date.valueOf(parameterValueString);
+        } else if (type == UploadFile.class) {
+            return MethodExecutor.createInstanceUploadFile(instanceName,req);
         }
          else if (type.getClass() instanceof Object) {
             String nextObjectBase = "";
@@ -89,6 +94,10 @@ public class MethodExecutor {
             return getObjectValue(type, nextObjectBase, req);
         }
         throw new IllegalArgumentException("Type non supporté : " + type.getTypeName());
+    }
+
+    private static UploadFile createInstanceUploadFile(String filename,HttpServletRequest req) throws IOException, ServletException {
+        return new UploadFile(req.getPart(filename));
     }
 
     private static String getParametterValue(String base, String instanceName, HttpServletRequest req) {

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,11 @@ import util.FinderAnotation;
 import util.MethodExecutor;
 import util.SpringJsonParser;
 
+@MultipartConfig(
+    fileSizeThreshold = 2*1024*1024,
+    maxFileSize = 10*1024*1024,
+    maxRequestSize = 100*1024*1024
+)
 public class DispacherServlet extends HttpServlet {
 
     private HashMap<UrlMethod, Method> urlMap;

@@ -2,7 +2,7 @@
 - upload de fichier 
 ## comment
 - creer classe 
-    - UploadFile
+    - [ok] UploadFile
       - artibut
         - name
         - extention
@@ -10,10 +10,15 @@
 
 - Dans MethodExecutor
   - verifier si l argument est UploadFile
-    - creer l instance de uploadFile
-      - recuperer le nom du fichier 
-      - recuperer l extention du fichier
-      - copier les bits
-    - creer fonction save dans UploadFile
-      - creer le ficier
-      - sauvgarder le fichier
+    - [ok] creer l instance de uploadFile
+      - [ok] recuperer le nom du fichier 
+      - [ok] recuperer l extention du fichier
+      - [ok] copier les bits
+    - [ok] creer fonction save dans UploadFile
+      - [ok] creer le ficier
+      - [ok] sauvgarder le fichier
+- Recueprer chemin upload 
+  - ajouter app.proporties dans la racine du projet 
+  - lirer app.proporties
+  - recuperer uploadfile
+  - utiliser uploadfile
