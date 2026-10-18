@@ -9,21 +9,29 @@ import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Properties;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import model.UploadFile;
 
 public class MethodExecutor {
 
-    public static Object execute(Method method) throws InstantiationException, IllegalAccessException,
+    private ServletContext servletContext;
+
+    public MethodExecutor(ServletContext context) {
+        this.servletContext = context;
+    }
+
+    public Object execute(Method method) throws InstantiationException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // cree une instance de la classe qui va executer
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
         return method.invoke(instance);
     }
 
-    public static Object execute(Method method, HttpServletRequest req)
+    public  Object execute(Method method, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException, IOException, ServletException {
         // cree une instance de la classe qui va executer
@@ -32,7 +40,7 @@ public class MethodExecutor {
         return method.invoke(instance, getArgsValues(method, req));
     }
 
-    private static Object[] getArgsValues(Method method, HttpServletRequest req)
+    private  Object[] getArgsValues(Method method, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException, IOException, ServletException {
         ArrayList<Object> paramsValues = new ArrayList<>();
@@ -43,14 +51,14 @@ public class MethodExecutor {
         return paramsValues.toArray();
     }
 
-    private static Object getParameterValue(Parameter parameter, HttpServletRequest req)
+    private Object getParameterValue(Parameter parameter, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException, IOException, ServletException {
         Type targetType = parameter.getParameterizedType();
         return createInstance(targetType, null, parameter.getName(), req);
     }
 
-    private static Object getObjectValue(Type type, String base, HttpServletRequest req)
+    private Object getObjectValue(Type type, String base, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException, IOException, ServletException {
         if (type instanceof Class<?>) {
@@ -66,7 +74,7 @@ public class MethodExecutor {
                 "Erreur type doit etre une instance de class or il est une instance de : " + type.getTypeName());
     }
 
-    private static Object createInstance(Type type, String base, String instanceName, HttpServletRequest req)
+    private Object createInstance(Type type, String base, String instanceName, HttpServletRequest req)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException, IOException, ServletException {
         String parameterValueString = getParametterValue(base, instanceName, req);
@@ -83,7 +91,7 @@ public class MethodExecutor {
         } else if (type == Date.class) {
             return Date.valueOf(parameterValueString);
         } else if (type == UploadFile.class) {
-            return MethodExecutor.createInstanceUploadFile(instanceName,req);
+            return this.createInstanceUploadFile(instanceName,req);
         }
          else if (type.getClass() instanceof Object) {
             String nextObjectBase = "";
@@ -96,11 +104,11 @@ public class MethodExecutor {
         throw new IllegalArgumentException("Type non supporté : " + type.getTypeName());
     }
 
-    private static UploadFile createInstanceUploadFile(String filename,HttpServletRequest req) throws IOException, ServletException {
-        return new UploadFile(req.getPart(filename));
+    private UploadFile createInstanceUploadFile(String filename,HttpServletRequest req) throws IOException, ServletException {
+        return new UploadFile(req.getPart(filename),this.servletContext);
     }
 
-    private static String getParametterValue(String base, String instanceName, HttpServletRequest req) {
+    private  String getParametterValue(String base, String instanceName, HttpServletRequest req) {
         System.out.println("FIX: Creer instance : " + base + "." + instanceName);
 
         if (base == null) {

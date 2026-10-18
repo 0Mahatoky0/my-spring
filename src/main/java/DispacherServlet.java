@@ -29,6 +29,7 @@ public class DispacherServlet extends HttpServlet {
     private String pageResolvePrefix;
     private String pageResolveSufix;
     private SpringJsonParser jsonParser;
+    private MethodExecutor methodExecutor;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -40,6 +41,7 @@ public class DispacherServlet extends HttpServlet {
         
         // TODO : a initialiser dans App initialiser
         this.jsonParser = new SpringJsonParser(new ObjectMapper());
+        this.methodExecutor = new MethodExecutor(context);
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -61,9 +63,9 @@ public class DispacherServlet extends HttpServlet {
             try {
                 Object resultExecution = null;
                 if(method.getParameterCount() != 0) {
-                    resultExecution = MethodExecutor.execute(method,req);
+                    resultExecution = methodExecutor.execute(method,req);
                 } else {
-                    resultExecution = MethodExecutor.execute(method);
+                    resultExecution = methodExecutor.execute(method);
                 }
                  // verifier si la methode est annote api
                 if (FinderAnotation.haveApiAnotation(method)) {

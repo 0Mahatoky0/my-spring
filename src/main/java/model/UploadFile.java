@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.Part;
 
 public class UploadFile {
@@ -13,9 +14,10 @@ public class UploadFile {
     private String name;
     private String extention;
     private InputStream inputStream;
-    private String fileDestinationName;
 
-    public UploadFile(Part part) throws IOException {
+    private String uploadDir;
+
+    public UploadFile(Part part,ServletContext context) throws IOException {
         this.name = part.getSubmittedFileName();
         this.inputStream = part.getInputStream();
         // 1. Extraire l'extension
@@ -23,17 +25,12 @@ public class UploadFile {
         if (i > 0) {
             this.extention = name.substring(i + 1);
         }
-        setFileDestinationName();
-    }
-
-    private void setFileDestinationName() {
-        // TODO : A RECUPERER DANS UN PROPRETIES
-        this.fileDestinationName = "/home/max/Fianarana/main/s4/webdin/projet/upload/";
+        uploadDir = context.getAttribute("fileUploadDir").toString();
     }
 
     public void saveFile() throws IOException {
-        File fileUpload = new File(this.fileDestinationName.concat(name));
-        System.out.println("Nom du fichier  : " + fileDestinationName);
+        File fileUpload = new File(this.uploadDir.concat(name));
+        System.out.println("Nom du fichier  : " + uploadDir);
         Files.copy(this.inputStream, fileUpload.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
