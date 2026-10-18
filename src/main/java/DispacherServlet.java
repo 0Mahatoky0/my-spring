@@ -6,9 +6,9 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,12 +18,18 @@ import util.FinderAnotation;
 import util.MethodExecutor;
 import util.SpringJsonParser;
 
+@MultipartConfig(
+    fileSizeThreshold = 2*1024*1024,
+    maxFileSize = 10*1024*1024,
+    maxRequestSize = 100*1024*1024
+)
 public class DispacherServlet extends HttpServlet {
 
     private HashMap<UrlMethod, Method> urlMap;
     private String pageResolvePrefix;
     private String pageResolveSufix;
     private SpringJsonParser jsonParser;
+    private MethodExecutor methodExecutor;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -35,6 +41,7 @@ public class DispacherServlet extends HttpServlet {
         
         // TODO : a initialiser dans App initialiser
         this.jsonParser = new SpringJsonParser(new ObjectMapper());
+        this.methodExecutor = new MethodExecutor(context);
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -56,9 +63,9 @@ public class DispacherServlet extends HttpServlet {
             try {
                 Object resultExecution = null;
                 if(method.getParameterCount() != 0) {
-                    resultExecution = MethodExecutor.execute(method,req);
+                    resultExecution = methodExecutor.execute(method,req);
                 } else {
-                    resultExecution = MethodExecutor.execute(method);
+                    resultExecution = methodExecutor.execute(method);
                 }
                  // verifier si la methode est annote api
                 if (FinderAnotation.haveApiAnotation(method)) {
