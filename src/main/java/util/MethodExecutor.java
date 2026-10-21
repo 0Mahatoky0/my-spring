@@ -15,6 +15,8 @@ import javax.naming.NameNotFoundException;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import model.MySession;
 import model.UploadFile;
 
 public class MethodExecutor {
@@ -93,6 +95,8 @@ public class MethodExecutor {
             return Date.valueOf(parameterValueString);
         } else if (type == UploadFile.class) {
             return this.createInstanceUploadFile(instanceName,req);
+        } else if(type == MySession.class) {
+            return this.getSession(req);
         }
          else if (type.getClass() instanceof Object) {
             String nextObjectBase = "";
@@ -103,6 +107,14 @@ public class MethodExecutor {
             return getObjectValue(type, nextObjectBase, req);
         }
         throw new IllegalArgumentException("Type non supporté : " + type.getTypeName());
+    }
+
+    private Object getSession(HttpServletRequest req) {
+        MySession mySession = (MySession)req.getSession().getAttribute("session");
+        if(mySession == null) {
+            req.getSession().setAttribute("session",new MySession(req.getSession()));
+        }
+        return mySession;
     }
 
     private UploadFile createInstanceUploadFile(String filename,HttpServletRequest req) throws IOException, ServletException, NameNotFoundException {
