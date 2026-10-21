@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.ModelAndView;
 import model.UrlMethod;
+import security.SecurityService;
 import util.FinderAnotation;
 import util.MethodExecutor;
 import util.SpringJsonParser;
@@ -30,6 +31,7 @@ public class DispacherServlet extends HttpServlet {
     private String pageResolveSufix;
     private SpringJsonParser jsonParser;
     private MethodExecutor methodExecutor;
+    private SecurityService securityService;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -38,7 +40,7 @@ public class DispacherServlet extends HttpServlet {
         this.urlMap = (HashMap<UrlMethod, Method>) context.getAttribute("urlMap");
         pageResolvePrefix = context.getAttribute("pageResolvePrefix").toString();
         pageResolveSufix = context.getAttribute("pageResolveSufix").toString();
-        
+        this.securityService = new SecurityService();
         // TODO : a initialiser dans App initialiser
         this.jsonParser = new SpringJsonParser(new ObjectMapper());
         this.methodExecutor = new MethodExecutor(context);
@@ -67,11 +69,20 @@ public class DispacherServlet extends HttpServlet {
                 } else {
                     resultExecution = methodExecutor.execute(method);
                 }
+
+                if(FinderAnotation.haveNeedLoginAnotation(method)) {
+                    if(!this.securityService.isConnected(req)) {
+                        
+                        processModelAndView(req,res,new ModelAndView("login"));
+                        return;
+                    }
+                }
                  // verifier si la methode est annote api
                 if (FinderAnotation.haveApiAnotation(method)) {
                     processApi(req, res,resultExecution);
                     return;
                 }
+
                 // si il retourne uniquement une string
                 if (resultExecution instanceof String) {
                     // envoyer vers la vues corespondente

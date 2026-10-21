@@ -14,12 +14,18 @@ import anotation.PostMapping;
 import anotation.ResponseBody;
 import anotation.UrlMapping;
 import model.UrlMethod;
+import security.anotation.NeedLogin;
 
 public class FinderAnotation {
 
     public static boolean haveApiAnotation(Method method) {
         return method.isAnnotationPresent(ResponseBody.class)
                 || method.getDeclaringClass().isAnnotationPresent(ResponseBody.class);
+    }
+
+    public static boolean haveNeedLoginAnotation(Method method) {
+        return method.isAnnotationPresent(NeedLogin.class)
+                || method.getDeclaringClass().isAnnotationPresent(NeedLogin.class);
     }
 
     public static void getControleurMaping(String packageName, HashMap<UrlMethod, Method> urlMaps) throws Exception {
