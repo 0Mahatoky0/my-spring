@@ -32,8 +32,12 @@ public class SecurityService {
     public boolean accesAuthorised(HttpServletRequest req, Method method) {
         NeedLogin needLogin = method.getAnnotation(NeedLogin.class);
         Optional<MySpringUser> optionalUser = getUserConnected(req);
+        if (needLogin.value().length == 0 && optionalUser.isPresent())
+            return true;
+        // refuser l acces si l anotation needLogin est present et que l user n est pas
+        // connecter ou que le role de l user n est pas dans la liste des role autoriser
         if (needLogin != null
-                 && (optionalUser.isEmpty() || !Arrays.asList(needLogin.value()).contains(optionalUser.get().getRole())))
+                && (optionalUser.isEmpty() || !Arrays.asList(needLogin.value()).contains(optionalUser.get().getRole())))
             return false;
         return true;
     }
