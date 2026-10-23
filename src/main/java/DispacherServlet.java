@@ -14,31 +14,32 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.ModelAndView;
 import model.UrlMethod;
+import security.SecurityService;
 import util.FinderAnotation;
 import util.MethodExecutor;
 import util.SpringJsonParser;
+import view.ViewService;
 
-@MultipartConfig(
-    fileSizeThreshold = 2*1024*1024,
-    maxFileSize = 10*1024*1024,
-    maxRequestSize = 100*1024*1024
-)
+@MultipartConfig(fileSizeThreshold = 2 * 1024 * 1024, maxFileSize = 10 * 1024 * 1024, maxRequestSize = 100 * 1024
+        * 1024)
 public class DispacherServlet extends HttpServlet {
 
     private HashMap<UrlMethod, Method> urlMap;
-    private String pageResolvePrefix;
-    private String pageResolveSufix;
     private SpringJsonParser jsonParser;
     private MethodExecutor methodExecutor;
+    private SecurityService securityService;
+    private ViewService viewService;
 
     @SuppressWarnings("unchecked")
     @Override
     public void init() throws ServletException {
         ServletContext context = getServletContext();
         this.urlMap = (HashMap<UrlMethod, Method>) context.getAttribute("urlMap");
-        pageResolvePrefix = context.getAttribute("pageResolvePrefix").toString();
-        pageResolveSufix = context.getAttribute("pageResolveSufix").toString();
-        
+        this.viewService = new ViewService(
+                context.getAttribute("pageResolvePrefix").toString(),
+                context.getAttribute("pageResolveSufix").toString());
+                Object objIsConnectedSessionName = context.getInitParameter("isConnectedSessionName");
+        this.securityService = new SecurityService(objIsConnectedSessionName != null ? objIsConnectedSessionName.toString() : "isConnected");
         // TODO : a initialiser dans App initialiser
         this.jsonParser = new SpringJsonParser(new ObjectMapper());
         this.methodExecutor = new MethodExecutor(context);
@@ -59,27 +60,39 @@ public class DispacherServlet extends HttpServlet {
         resolveCors(res);
         // verifier si l url taper corespond a une route
         if (urlMap.containsKey(new UrlMethod(req.getServletPath(), req.getMethod()))) {
-        Method method = urlMap.get(new UrlMethod(req.getServletPath(), req.getMethod()));
+            Method method = urlMap.get(new UrlMethod(req.getServletPath(), req.getMethod()));
             try {
                 Object resultExecution = null;
-                if(method.getParameterCount() != 0) {
-                    resultExecution = methodExecutor.execute(method,req);
+                
+                if (FinderAnotation.haveNeedLoginAnotation(method)) {
+                    if (!this.securityService.isConnected(req)) {
+                        ModelAndView modelAndView = new ModelAndView("login");
+                        modelAndView.addAttributes("error","Vous devez vous connecter");
+                        this.viewService.processModelAndView(req, res,modelAndView);
+                        return;
+                    }
+                }
+
+                if (method.getParameterCount() != 0) {
+                    resultExecution = methodExecutor.execute(method, req);
                 } else {
                     resultExecution = methodExecutor.execute(method);
                 }
-                 // verifier si la methode est annote api
+
+                // verifier si la methode est annote api
                 if (FinderAnotation.haveApiAnotation(method)) {
-                    processApi(req, res,resultExecution);
+                    processApi(req, res, resultExecution);
                     return;
                 }
+
                 // si il retourne uniquement une string
                 if (resultExecution instanceof String) {
                     // envoyer vers la vues corespondente
-                    req.getRequestDispatcher(resolveNameView(resultExecution.toString())).forward(req, res);
+                    this.viewService.forwardToView(req, res, resultExecution.toString());
                 }
                 if (resultExecution instanceof ModelAndView) {
                     ModelAndView modelAndView = (ModelAndView) resultExecution;
-                    processModelAndView(req, res, modelAndView);
+                    this.viewService.processModelAndView(req, res, modelAndView);
                 }
             } catch (Exception e) {
                 res.getWriter().println(
@@ -93,20 +106,11 @@ public class DispacherServlet extends HttpServlet {
         res.getWriter().flush();
     }
 
-    private void processApi(HttpServletRequest req, HttpServletResponse res, Object jsonResponse) throws JsonProcessingException, IOException {
+    private void processApi(HttpServletRequest req, HttpServletResponse res, Object jsonResponse)
+            throws JsonProcessingException, IOException {
         res.setContentType("application/json");
         res.getWriter().write(this.jsonParser.toJson(jsonResponse));
         res.getWriter().flush();
-    }
-
-    private void processModelAndView(HttpServletRequest req, HttpServletResponse res, ModelAndView modelAndView)
-            throws ServletException, IOException {
-        // envoyer les models vers la page
-        for (Map.Entry<String, Object> model : modelAndView.getAttributes().entrySet()) {
-            req.setAttribute(model.getKey(), model.getValue());
-        }
-        // envoyer vers la vue corespondente
-        req.getRequestDispatcher(resolveNameView(modelAndView.getView())).forward(req, res);
     }
 
     private void showAllUrlMapping(HttpServletResponse res) throws IOException {
@@ -115,10 +119,6 @@ public class DispacherServlet extends HttpServlet {
             res.getWriter().println(mapping.getKey() + " -> " + toString(mapping.getValue()));
         }
         res.getWriter().println("[INF] : FIN LISTE ");
-    }
-
-    private String resolveNameView(String viewName) {
-        return pageResolvePrefix + viewName + pageResolveSufix;
     }
 
     private void resolveCors(HttpServletResponse res) {
