@@ -66,7 +66,9 @@ public class DispacherServlet extends HttpServlet {
                 
                 if (FinderAnotation.haveNeedLoginAnotation(method)) {
                     if (!this.securityService.isConnected(req)) {
-                        this.viewService.processModelAndView(req, res, new ModelAndView("login"));
+                        ModelAndView modelAndView = new ModelAndView("login");
+                        modelAndView.addAttributes("error","Vous devez vous connecter");
+                        this.viewService.processModelAndView(req, res,modelAndView);
                         return;
                     }
                 }
