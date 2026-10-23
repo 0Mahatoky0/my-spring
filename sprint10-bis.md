@@ -6,7 +6,7 @@
     - arguement :
       - Role de l user (string)
 - [ok] creer une interface MySpringUser
-  - creer fonction getRole()
+  - [ok] creer fonction getRole()
 - lores de la recherche anotation
   - verifier quelle est l anotation present
   - verifier si l user conncter a le role defini
