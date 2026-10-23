@@ -1,11 +1,11 @@
 # sprint 10-bis
 - Choisir les personnes qui peuvent acceder a une url
 # todo
-- creer anotation
+- [ok] creer anotation
   - needAuthentification
     - arguement :
       - Role de l user (string)
-- creer une interface MySpringUser
+- [ok] creer une interface MySpringUser
   - creer fonction getRole()
 - lores de la recherche anotation
   - verifier quelle est l anotation present
