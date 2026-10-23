@@ -19,7 +19,7 @@ public class AppInitialiser implements ServletContextListener {
         String pakageControleur = context.getInitParameter("controleurPackage");
         String pageResolvePrefix = context.getInitParameter("pageResolvePrefix");
         String pageResolveSufix = context.getInitParameter("pageResolveSufix");
-
+        
         if (pakageControleur == null || pakageControleur.isBlank()) {
             throw new IllegalStateException("Parametre d'initialisation 'controleurPackage' manquant dans web.xml");
         }
