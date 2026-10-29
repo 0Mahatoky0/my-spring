@@ -1,6 +1,7 @@
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import jakarta.servlet.ServletContext;
@@ -19,7 +20,7 @@ public class AppInitialiser implements ServletContextListener {
         String pakageControleur = context.getInitParameter("controleurPackage");
         String pageResolvePrefix = context.getInitParameter("pageResolvePrefix");
         String pageResolveSufix = context.getInitParameter("pageResolveSufix");
-        
+
         if (pakageControleur == null || pakageControleur.isBlank()) {
             throw new IllegalStateException("Parametre d'initialisation 'controleurPackage' manquant dans web.xml");
         }
@@ -29,6 +30,7 @@ public class AppInitialiser implements ServletContextListener {
             context.setAttribute("urlMap", urlMap);
             context.setAttribute("pageResolvePrefix", pageResolvePrefix);
             context.setAttribute("pageResolveSufix", pageResolveSufix);
+            context.setAttribute("controllers", getAllControllers(pakageControleur));
 
             setUploadFileDestination(context);
         } catch (Exception e) {
@@ -36,14 +38,25 @@ public class AppInitialiser implements ServletContextListener {
         }
     }
 
+    public HashMap<Class<?>, Object> getAllControllers(String pakageControleur) throws Exception {
+        HashMap<Class<?>, Object> controllers = new HashMap<>();
+        // recuperer les classe dans le package
+        List<Class<?>> listClasses = FinderAnotation.findAllControleur(pakageControleur);
+        for (Class<?> controleur : listClasses) {
+            Object instance = controleur.getDeclaredConstructor().newInstance();
+            controllers.put(controleur, instance);
+        }
+        return controllers;
+    }
+
     public void setUploadFileDestination(ServletContext context) throws Exception {
         try (InputStream input = AppInitialiser.class.getClassLoader().getResourceAsStream("app.properties")) {
-            if(input == null) {
+            if (input == null) {
                 System.err.println("[WARN] : Fichier de configuration 'app.properties' introuvable.");
             } else {
                 Properties properties = new Properties();
                 properties.load(input);
-                context.setAttribute("fileUploadDir",properties.getProperty("fileUploadDir"));
+                context.setAttribute("fileUploadDir", properties.getProperty("fileUploadDir"));
             }
         } catch (Exception e) {
             System.err.println("[ERROR] : Imposible de lire 'app.properties'.");
