@@ -1,3 +1,4 @@
+package com.mahatoky.web.myspring;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import model.UrlMethod;

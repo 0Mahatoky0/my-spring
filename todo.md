@@ -16,4 +16,4 @@
   - servlet a la fin
 
 # next step
-- migerer le projet vers un projet maven
+- [en_cours] migerer le projet vers un projet maven
