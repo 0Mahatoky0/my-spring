@@ -1,7 +1,7 @@
 package com.mahatoky.web.myspring;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import model.UrlMethod;
+import com.mahatoky.web.myspring.model.UrlMethod;
 
 public class Test {
     public static void main(String[] args) throws Exception {

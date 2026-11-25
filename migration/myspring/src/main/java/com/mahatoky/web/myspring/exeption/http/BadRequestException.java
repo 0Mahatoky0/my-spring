@@ -1,5 +1,4 @@
-package exeption.http;
-
+package com.mahatoky.web.myspring.exeption.http;
 public class BadRequestException extends Exception {
     private final int code = 400;
 

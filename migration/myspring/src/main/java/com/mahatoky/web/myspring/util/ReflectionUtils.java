@@ -1,4 +1,4 @@
-package util;
+package com.mahatoky.web.myspring.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

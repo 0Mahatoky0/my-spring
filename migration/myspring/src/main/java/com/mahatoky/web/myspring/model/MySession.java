@@ -1,5 +1,4 @@
-package model;
-
+package com.mahatoky.web.myspring.model;
 import jakarta.servlet.http.HttpSession;
 
 public class MySession {

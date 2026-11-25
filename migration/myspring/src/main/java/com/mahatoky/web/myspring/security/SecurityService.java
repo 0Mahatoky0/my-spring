@@ -1,12 +1,11 @@
-package security;
-
+package com.mahatoky.web.myspring.security;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
-import security.anotation.NeedLogin;
-import security.contrat.MySpringUser;
+import com.mahatoky.web.myspring.security.anotation.NeedLogin;
+import com.mahatoky.web.myspring.security.contrat.MySpringUser;
 
 public class SecurityService {
 

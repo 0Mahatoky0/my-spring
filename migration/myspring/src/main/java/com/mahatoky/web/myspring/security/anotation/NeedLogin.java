@@ -1,4 +1,4 @@
-package security.anotation;
+package com.mahatoky.web.myspring.security.anotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

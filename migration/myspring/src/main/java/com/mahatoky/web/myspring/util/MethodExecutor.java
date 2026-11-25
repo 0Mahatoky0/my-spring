@@ -1,5 +1,4 @@
-package util;
-
+package com.mahatoky.web.myspring.util;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -17,8 +16,8 @@ import javax.naming.NameNotFoundException;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import model.MySession;
-import model.UploadFile;
+import com.mahatoky.web.myspring.model.MySession;
+import com.mahatoky.web.myspring.model.UploadFile;
 
 public class MethodExecutor {
 

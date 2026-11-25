@@ -9,8 +9,8 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
-import model.UrlMethod;
-import util.FinderAnotation;
+import com.mahatoky.web.myspring.model.UrlMethod;
+import com.mahatoky.web.myspring.util.FinderAnotation;
 
 @WebListener
 public class AppInitialiser implements ServletContextListener {

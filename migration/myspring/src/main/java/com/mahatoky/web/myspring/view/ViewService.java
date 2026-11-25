@@ -1,4 +1,4 @@
-package view;
+package com.mahatoky.web.myspring.view;
 
 import java.io.IOException;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.ModelAndView;
+import com.mahatoky.web.myspring.model.ModelAndView;
 
 public class ViewService {
 

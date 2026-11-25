@@ -1,5 +1,4 @@
-package model;
-
+package com.mahatoky.web.myspring.model;
 import java.util.HashMap;
 
 public class ModelAndView {

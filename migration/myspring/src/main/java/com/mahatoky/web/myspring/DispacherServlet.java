@@ -13,13 +13,13 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.ModelAndView;
-import model.UrlMethod;
-import security.SecurityService;
-import util.FinderAnotation;
-import util.MethodExecutor;
-import util.SpringJsonParser;
-import view.ViewService;
+import com.mahatoky.web.myspring.model.ModelAndView;
+import com.mahatoky.web.myspring.model.UrlMethod;
+import com.mahatoky.web.myspring.security.SecurityService;
+import com.mahatoky.web.myspring.util.FinderAnotation;
+import com.mahatoky.web.myspring.util.MethodExecutor;
+import com.mahatoky.web.myspring.util.SpringJsonParser;
+import com.mahatoky.web.myspring.view.ViewService;
 
 @MultipartConfig(fileSizeThreshold = 2 * 1024 * 1024, maxFileSize = 10 * 1024 * 1024, maxRequestSize = 100 * 1024
         * 1024)

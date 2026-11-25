@@ -1,10 +1,9 @@
-package model;
-
+package com.mahatoky.web.myspring.model;
 import java.util.Objects;
 
-import anotation.GetMapping;
-import anotation.PostMapping;
-import anotation.UrlMapping;
+import com.mahatoky.web.myspring.anotation.GetMapping;
+import com.mahatoky.web.myspring.anotation.PostMapping;
+import com.mahatoky.web.myspring.anotation.UrlMapping;
 
 public class UrlMethod {
 
